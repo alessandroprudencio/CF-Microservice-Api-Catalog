@@ -1,6 +1,6 @@
 # CF-Microservice-Api-Catalog
 
-Microsserviço - Backend do catálogo de vídeos com Laravel da CodeFlix
+Microsserviço - Backend do catálogo de vídeos com Nodes da CodeFlix
 
 ### Arquitetura e requisitos do projeto
 
