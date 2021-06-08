@@ -1,4 +1,8 @@
-import {ApplicationConfig, CfMicroserviceApiCatalogApplication} from './application';
+import {
+  ApplicationConfig,
+  CfMicroserviceApiCatalogApplication,
+} from './application';
+import './bootstrap';
 
 export * from './application';
 
