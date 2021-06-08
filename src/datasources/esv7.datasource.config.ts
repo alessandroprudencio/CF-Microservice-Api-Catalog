@@ -4,17 +4,13 @@ export default {
   ...datasource,
   connector: 'esv6',
   index: 'catalog',
-  apiVersion: '7',
-  debug: true,
-  defaultSize: 50,
+  version: 7,
+  debug: process.env.APP_ENV === 'dev',
+  // defaultSize: 50,
   configuration: {
     node: process.env.ELASTIC_SEARCH_HOST,
     requestTimeout: process.env.ELASTIC_SEARCH_REQUEST_TIMEOUT,
     pingTimeout: process.env.ELASTIC_SEARCH_PING_TIMEOUT,
-    mappingProperties: {
-      // docType: {
-      //   type: 'keyword',
-      // },
-    },
+    mappingProperties: {},
   },
 };
