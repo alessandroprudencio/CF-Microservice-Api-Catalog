@@ -1,3 +1,4 @@
+import {RestServer} from '@loopback/rest';
 import {
   ApplicationConfig,
   CfMicroserviceApiCatalogApplication,
@@ -11,7 +12,9 @@ export async function main(options: ApplicationConfig = {}) {
   await app.boot();
   await app.start();
 
-  const url = app.restServer.url;
+  const restServer = app.getSync<RestServer>('servers.RestServer');
+
+  const url = restServer.url;
   console.log(`Server is running at ${url}`);
   console.log(`Try ${url}/ping`);
 
