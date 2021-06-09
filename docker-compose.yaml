@@ -20,6 +20,7 @@ services:
     container_name: micro-catalog-elasticsearch
     environment:
       - discovery.type=single-node
+      - xpack.security.enabled=false
     volumes:
       - ./.docker/elasticdata:/usr/share/elasticsearch/data
     ports:
