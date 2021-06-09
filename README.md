@@ -46,6 +46,7 @@ yarn test
 - [LoopBack](https://loopback.io/)
 - [ElasticSearch](https://www.elastic.co/)
 - [Kibana](https://www.elastic.co/pt/kibana)
+- [RabbitMQ](https://www.rabbitmq.com/)
 
 ## Contribuição
 
