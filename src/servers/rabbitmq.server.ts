@@ -31,14 +31,16 @@ export class RabbitmqServer extends Context implements Server {
   async boot() {
     const channel: Channel = await this.conn.createChannel();
 
-    const queue: Replies.AssertQueue = await channel.assertQueue('first-queue');
-
-    const exchange: Replies.AssertExchange = await channel.assertExchange(
-      'amq.direct',
-      'direct',
+    const queue: Replies.AssertQueue = await channel.assertQueue(
+      'micro-catalog/sync-videos',
     );
 
-    await channel.bindQueue(queue.queue, exchange.exchange, 'my-routing-key');
+    const exchange: Replies.AssertExchange = await channel.assertExchange(
+      'amq.topic',
+      'topic',
+    );
+
+    await channel.bindQueue(queue.queue, exchange.exchange, 'model.*.*  ');
 
     // const result = channel.sendToQueue(
     //   'first-queue',
@@ -52,7 +54,13 @@ export class RabbitmqServer extends Context implements Server {
     );
 
     await channel.consume(queue.queue, (msg: ConsumeMessage | null) => {
-      console.log(msg?.content.toString());
+      if (!msg) return;
+
+      console.log(JSON.parse(msg.content.toString()));
+
+      const [model, event] = msg.fields.routingKey.split('.').slice(1);
+
+      console.log(model, event);
     });
   }
 
