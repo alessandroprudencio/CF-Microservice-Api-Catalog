@@ -40,6 +40,20 @@ Pronto sua aplicação estará rodando no endereço http://localhost:3000
 yarn test
 ```
 
+## Erros comuns e soluções
+
+Permissões na pasta .docker/elasticdata
+
+```
+sudo chmod 777 ./.docker/elasticdata
+```
+
+Ajustes nos limites de memória
+
+```
+sudo sysctl -w vm.max_map_count=262144
+```
+
 ## Construído com
 
 - [Node.js](https://nodejs.org/)
@@ -62,3 +76,7 @@ Abra um Pull Request
 - alessandroconectado@gmail.com
 - +55 (67) 99269-6705
 - [Linkedin](https://www.linkedin.com/in/alessandro-prudencio/)
+
+```
+
+```
