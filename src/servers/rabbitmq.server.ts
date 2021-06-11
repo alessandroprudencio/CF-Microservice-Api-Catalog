@@ -40,7 +40,7 @@ export class RabbitmqServer extends Context implements Server {
       'topic',
     );
 
-    await channel.bindQueue(queue.queue, exchange.exchange, 'model.*.*  ');
+    await channel.bindQueue(queue.queue, exchange.exchange, 'model.*.*');
 
     // const result = channel.sendToQueue(
     //   'first-queue',
