@@ -1,18 +1,23 @@
 import {Context} from '@loopback/context';
 import {Server} from '@loopback/core';
+import {repository} from '@loopback/repository';
 import {Channel, connect, Connection, ConsumeMessage} from 'amqplib';
 import {Replies} from 'amqplib/properties';
-
-/*
-Disparar uma mensagem a cada evento de cada model do Laravel:criar, editar,excluir e relacionamentos
-Vários microsserviços poderão  ser notificados dos eventos que ocorreram
-Alguns microsserviços poderão querer ser notificados somente de alguns eventos "somente quando tem novos uploads"
- */
+import {Category} from '../models';
+import {CategoryRepository} from '../repositories';
 
 export class RabbitmqServer extends Context implements Server {
   private _listening: boolean;
 
   conn: Connection;
+
+  channel: Channel;
+
+  constructor(
+    @repository(CategoryRepository) private categoryRepo: CategoryRepository,
+  ) {
+    super();
+  }
 
   async start(): Promise<void> {
     try {
@@ -29,39 +34,65 @@ export class RabbitmqServer extends Context implements Server {
   }
 
   async boot() {
-    const channel: Channel = await this.conn.createChannel();
+    this.channel = await this.conn.createChannel();
 
-    const queue: Replies.AssertQueue = await channel.assertQueue(
+    const queue: Replies.AssertQueue = await this.channel.assertQueue(
       'micro-catalog/sync-videos',
     );
 
-    const exchange: Replies.AssertExchange = await channel.assertExchange(
+    const exchange: Replies.AssertExchange = await this.channel.assertExchange(
       'amq.topic',
       'topic',
     );
 
-    await channel.bindQueue(queue.queue, exchange.exchange, 'model.*.*');
+    await this.channel.bindQueue(queue.queue, exchange.exchange, 'model.*.*');
 
-    // const result = channel.sendToQueue(
+    // const result = this.channel.sendToQueue(
     //   'first-queue',
     //   Buffer.from(JSON.stringify({message: 'insert new category'})),
     // );
 
-    channel.publish(
+    this.channel.publish(
       'amq.direct',
       'my-routing-key',
       Buffer.from(JSON.stringify({message: 'insert new category'})),
     );
 
-    await channel.consume(queue.queue, (msg: ConsumeMessage | null) => {
+    await this.channel.consume(queue.queue, (msg: ConsumeMessage | null) => {
       if (!msg) return;
 
-      console.log(JSON.parse(msg.content.toString()));
+      const data = JSON.parse(msg.content.toString());
 
       const [model, event] = msg.fields.routingKey.split('.').slice(1);
 
-      console.log(model, event);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      this.sync({model, event, data});
     });
+  }
+
+  async sync({
+    model,
+    event,
+    data,
+  }: {
+    model: string;
+    event: string;
+    data: Category;
+  }) {
+    if (model === 'category') {
+      switch (event) {
+        case 'created':
+          await this.categoryRepo.create({
+            ...data,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+          break;
+
+        default:
+          break;
+      }
+    }
   }
 
   async stop(): Promise<void> {
