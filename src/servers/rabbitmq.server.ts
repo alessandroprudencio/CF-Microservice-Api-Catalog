@@ -47,11 +47,6 @@ export class RabbitmqServer extends Context implements Server {
 
     await this.channel.bindQueue(queue.queue, exchange.exchange, 'model.*.*');
 
-    // const result = this.channel.sendToQueue(
-    //   'first-queue',
-    //   Buffer.from(JSON.stringify({message: 'insert new category'})),
-    // );
-
     this.channel.publish(
       'amq.direct',
       'my-routing-key',
@@ -65,8 +60,12 @@ export class RabbitmqServer extends Context implements Server {
 
       const [model, event] = msg.fields.routingKey.split('.').slice(1);
 
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      this.sync({model, event, data});
+      this.sync({model, event, data})
+        .then(() => this.channel.ack(msg))
+        .catch(err => {
+          console.log(err);
+          this.channel.reject(msg, false);
+        });
     });
   }
 
@@ -84,12 +83,15 @@ export class RabbitmqServer extends Context implements Server {
         case 'created':
           await this.categoryRepo.create({
             ...data,
-            createdAt: new Date(),
-            updatedAt: new Date(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
           });
           break;
-
-        default:
+        case 'updated':
+          await this.categoryRepo.updateById(data.id, data);
+          break;
+        case 'deleted':
+          await this.categoryRepo.deleteById(data.id);
           break;
       }
     }

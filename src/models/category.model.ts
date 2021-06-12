@@ -26,13 +26,13 @@ export class Category extends Entity {
     type: 'date',
     required: true,
   })
-  createdAt: Date;
+  createdAt: string;
 
   @property({
     type: 'date',
     required: true,
   })
-  updatedAt: Date;
+  updatedAt: string;
 
   constructor(data?: Partial<Category>) {
     super(data);
