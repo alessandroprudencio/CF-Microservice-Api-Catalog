@@ -1,9 +1,9 @@
 import {RestServer} from '@loopback/rest';
+import './bootstrap';
 import {
   ApplicationConfig,
   CfMicroserviceApiCatalogApplication,
 } from './application';
-import './bootstrap';
 
 export * from './application';
 
