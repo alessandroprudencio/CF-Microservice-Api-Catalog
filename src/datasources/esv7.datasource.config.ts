@@ -11,31 +11,31 @@ export default {
     node: process.env.ELASTIC_SEARCH_HOST,
     requestTimeout: Number(process.env.ELASTIC_SEARCH_REQUEST_TIMEOUT),
     pingTimeout: Number(process.env.ELASTIC_SEARCH_PING_TIMEOUT),
-    mappingProperties: {
-      docType: {
-        type: 'keyword',
-      },
-      id: {
-        type: 'keyword',
-      },
-      name: {
-        type: 'text',
-        fields: {
-          keyword: {
-            type: 'keyword',
-            ignoreAbove: 256,
-          },
+  },
+  mappingProperties: {
+    docType: {
+      type: 'keyword',
+    },
+    id: {
+      type: 'keyword',
+    },
+    name: {
+      type: 'text',
+      fields: {
+        keyword: {
+          type: 'keyword',
+          ignore_above: 256,
         },
       },
-      isActive: {
-        type: 'boolean',
-      },
-      createdAt: {
-        type: 'date',
-      },
-      updatedAt: {
-        type: 'date',
-      },
+    },
+    isActive: {
+      type: 'boolean',
+    },
+    createdAt: {
+      type: 'date',
+    },
+    updatedAt: {
+      type: 'date',
     },
   },
 };

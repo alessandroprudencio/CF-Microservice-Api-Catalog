@@ -53,17 +53,22 @@ export class RabbitmqServer extends Context implements Server {
       Buffer.from(JSON.stringify({message: 'insert new category'})),
     );
 
-    await this.channel.consume(queue.queue, (msg: ConsumeMessage | null) => {
+    // Example msg
+    // {"id": "dddab32b-a0ac-435e-9fd8-5350dd98dd4d","name": "categoria 1","createdAt": "2020-02-01","updatedAt": "2020-02-01"}
+
+    this.channel.consume(queue.queue, (msg: ConsumeMessage | null) => {
       if (!msg) return;
+
 
       const data = JSON.parse(msg.content.toString());
 
+
       const [model, event] = msg.fields.routingKey.split('.').slice(1);
 
-      this.sync({model, event, data})
+      this
+        .sync({model, event, data})
         .then(() => this.channel.ack(msg))
         .catch(err => {
-          console.log(err);
           this.channel.reject(msg, false);
         });
     });
@@ -81,6 +86,7 @@ export class RabbitmqServer extends Context implements Server {
     if (model === 'category') {
       switch (event) {
         case 'created':
+          console.log('data=>', data)
           await this.categoryRepo.create({
             ...data,
             createdAt: new Date().toISOString(),
