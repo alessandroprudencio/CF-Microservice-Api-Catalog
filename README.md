@@ -76,7 +76,3 @@ Abra um Pull Request
 - alessandroconectado@gmail.com
 - +55 (67) 99269-6705
 - [Linkedin](https://www.linkedin.com/in/alessandro-prudencio/)
-
-```
-
-```
