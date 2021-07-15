@@ -38,6 +38,5 @@ services:
 networks:
   app-network:
     driver: bridge
-
   rabbitmq_micro-catalog:
     external: true

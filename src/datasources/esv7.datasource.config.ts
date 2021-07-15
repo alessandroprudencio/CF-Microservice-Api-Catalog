@@ -28,6 +28,9 @@ export default {
         },
       },
     },
+    description: {
+      type: 'text',
+    },
     isActive: {
       type: 'boolean',
     },

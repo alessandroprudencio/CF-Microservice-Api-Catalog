@@ -86,7 +86,6 @@ export class RabbitmqServer extends Context implements Server {
     if (model === 'category') {
       switch (event) {
         case 'created':
-          console.log('data=>', data)
           await this.categoryRepo.create({
             ...data,
             createdAt: new Date().toISOString(),
