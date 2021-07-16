@@ -545,10 +545,17 @@
   resolved "https://registry.yarnpkg.com/@sinonjs/text-encoding/-/text-encoding-0.7.1.tgz#8da5c6530915653f3a1f38fd5f101d8c3f8079c5"
   integrity sha512-+iTbntw2IZPb/anVDbypzfQa+ay64MW0Zo8aJ8gZPWMMK6/OubMVb6lUPMagqjOPnmtauXnFCACVl3O7ogjeqQ==
 
-"@types/amqplib@^0.8.0":
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/@types/amqplib/-/amqplib-0.8.0.tgz#e6801e32ff09cec060df1464dbe9dc5f329ed423"
-  integrity sha512-RDojJ8WACs43HIfWSQGnAVwgNzjMGx4YMNeW7jptgAFgkG1EpNQqts+cND5HYWdYgTM58b+RHe675b0i4A9WpQ==
+"@types/amqp-connection-manager@^2.0.12":
+  version "2.0.12"
+  resolved "https://registry.yarnpkg.com/@types/amqp-connection-manager/-/amqp-connection-manager-2.0.12.tgz#809a01207193ffc15b1689806b51dfeba7b3f9f3"
+  integrity sha512-2GX1jG6ECpEXQF0X68gTTZc8MQ8GA0dM2mAd1irTpWlKzGKlGzCBtb1YnqLHozNNsoLtGI6UXSp0q06jU1LA6g==
+  dependencies:
+    "@types/amqplib" "*"
+
+"@types/amqplib@*", "@types/amqplib@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@types/amqplib/-/amqplib-0.8.1.tgz#895d9362335b0b88f51e45b60bcfeb76fb50492b"
+  integrity sha512-8dCjF+dHZ8Y6JOoHD1BMnxP0quAncvZq4wA/lS072NjX9vIzVRSMcmfKy2Os8ZQ8VWWp74MD09GMbVbKS6/Fxw==
   dependencies:
     "@types/bluebird" "*"
     "@types/node" "*"
@@ -863,6 +870,13 @@ ajv@^8.0.1:
     json-schema-traverse "^1.0.0"
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
+
+amqp-connection-manager@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/amqp-connection-manager/-/amqp-connection-manager-3.2.2.tgz#73c820b6ed440b451de24c1eb9cf3541a10635d9"
+  integrity sha512-o+6Kb4p+xFYwU8MuFxnrPQzhefCE2dcCd8dnevWLTRgQCtOTVC9AQ434hQyjB+Bpq6Vl9cDMWTOZT11ajB6ZSg==
+  dependencies:
+    promise-breaker "^5.0.0"
 
 amqplib@^0.8.0:
   version "0.8.0"
@@ -3456,6 +3470,11 @@ progress@^2.0.0:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
+
+promise-breaker@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/promise-breaker/-/promise-breaker-5.0.0.tgz#58e8541f1619554057da95a211794d7834d30c1d"
+  integrity sha512-mgsWQuG4kJ1dtO6e/QlNDLFtMkMzzecsC69aI5hlLEjGHFNpHrvGhFi4LiK5jg2SMQj74/diH+wZliL9LpGsyA==
 
 proxy-addr@~2.0.5:
   version "2.0.7"
