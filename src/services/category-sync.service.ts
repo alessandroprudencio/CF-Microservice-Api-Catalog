@@ -15,8 +15,8 @@ export class CategorySyncService {
     routingKey: 'model.category.*'
   })
 
-  handler() {
-    console.log(this.categoryRepo.entityClass, 'handler')
+  handler({data}: any) {
+    console.log(data)
   }
 
   @rabbitmqSubscribe({
@@ -25,7 +25,7 @@ export class CategorySyncService {
     routingKey: 'model.category1.*'
   })
 
-  handler1() {
-    console.log(this.categoryRepo.entityClass, 'handler1')
+  handler1({data}: any) {
+    console.log(data)
   }
 }
