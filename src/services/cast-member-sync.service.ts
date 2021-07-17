@@ -1,18 +1,18 @@
 import {bind, BindingScope} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {rabbitmqSubscribe} from '../decorators/rabbitmq-subscribe.decorator';
-import {CategoryRepository} from '../repositories';
+import {CastMemberRepository} from '../repositories';
 
 @bind({scope: BindingScope.TRANSIENT})
-export class CategorySyncService {
+export class CastMemberSyncService {
   constructor(
-    @repository(CategoryRepository) private categoryRepo: CategoryRepository,
+    @repository(CastMemberRepository) private castMemberRepo: CastMemberRepository,
   ) { }
 
   @rabbitmqSubscribe({
     exchange: 'amq.topic',
-    queue: 'micro-catalog/sync-videos/category',
-    routingKey: 'model.category.*'
+    queue: 'micro-catalog/sync-videos/cast_member',
+    routingKey: 'model.cast_member.*'
   })
 
   async handler({message, data}: any) {
@@ -20,13 +20,13 @@ export class CategorySyncService {
 
     switch (action) {
       case 'created':
-        await this.categoryRepo.create(data)
+        await this.castMemberRepo.create(data)
         break;
       case 'updated':
-        await this.categoryRepo.updateById(data, data.id)
+        await this.castMemberRepo.updateById(data, data.id)
         break;
       case 'deleted':
-        await this.categoryRepo.deleteById(data.id)
+        await this.castMemberRepo.deleteById(data.id)
         break;
     }
   }
