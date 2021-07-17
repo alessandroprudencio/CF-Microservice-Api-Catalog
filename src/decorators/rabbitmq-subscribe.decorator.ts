@@ -10,8 +10,7 @@ export interface RabbitmqSubscribeMetadata {
 
 export const RABBITMQ_SUBSCRIBE_DECORATOR = 'rabbitmq-subscribe-metadata'
 
-
-export function rabbitmqSubscriber(subscriber: RabbitmqSubscribeMetadata): MethodDecorator {
+export function rabbitmqSubscribe(subscriber: RabbitmqSubscribeMetadata): MethodDecorator {
   return MethodDecoratorFactory.createDecorator<RabbitmqSubscribeMetadata>(
     RABBITMQ_SUBSCRIBE_DECORATOR,
     subscriber
