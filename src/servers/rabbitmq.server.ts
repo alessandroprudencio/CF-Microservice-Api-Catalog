@@ -1,5 +1,5 @@
 import {Context, inject} from '@loopback/context';
-import {ApplicationConfig, Server} from '@loopback/core';
+import {Application, CoreBindings, Server} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {Channel, ConfirmChannel, ConsumeMessage} from 'amqplib';
 import {Options, Replies} from 'amqplib/properties';
@@ -7,6 +7,9 @@ import {Category} from '../models';
 import {CategoryRepository} from '../repositories';
 import {RabbitmqBindings} from '../keys';
 import {AmqpConnectionManager, AmqpConnectionManagerOptions, ChannelWrapper, connect} from 'amqp-connection-manager';
+import {MetadataInspector} from '@loopback/metadata'
+import {RabbitmqSubscribeMetadata, RABBITMQ_SUBSCRIBE_DECORATOR} from '../decorators/rabbitmq-subscribe.decorator';
+import {CategorySyncService} from '../services';
 
 export interface RabbitmqConfig {
   uri: string,
@@ -15,7 +18,7 @@ export interface RabbitmqConfig {
     name: string,
     type: string,
     options?: Options.AssertExchange
-  }[]
+  }
 }
 
 export class RabbitmqServer extends Context implements Server {
@@ -28,10 +31,11 @@ export class RabbitmqServer extends Context implements Server {
   channel: Channel;
 
   constructor(
+    @inject(CoreBindings.APPLICATION_INSTANCE) public app: Application,
     @repository(CategoryRepository) private categoryRepo: CategoryRepository,
     @inject(RabbitmqBindings.CONFIG) private config: RabbitmqConfig
   ) {
-    super();
+    super(app);
     console.log(config);
   }
 
@@ -51,6 +55,13 @@ export class RabbitmqServer extends Context implements Server {
     })
 
     await this.setupExchanges()
+
+    const service = this.getSync<CategorySyncService>('services.CategorySyncService')
+    const metadata = MetadataInspector.getAllMethodMetadata<RabbitmqSubscribeMetadata>(
+      RABBITMQ_SUBSCRIBE_DECORATOR, service
+    )
+
+    console.log(metadata)
 
     // this.boot();
   }
