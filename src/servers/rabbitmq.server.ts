@@ -2,7 +2,7 @@ import {Binding, Context, inject} from '@loopback/context';
 import {Application, CoreBindings, Server} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {Channel, ConfirmChannel} from 'amqplib';
-import {Options} from 'amqplib/properties';
+import {Message, Options} from 'amqplib/properties';
 import {CategoryRepository} from '../repositories';
 import {RabbitmqBindings} from '../keys';
 import {AmqpConnectionManager, AmqpConnectionManagerOptions, ChannelWrapper, connect} from 'amqp-connection-manager';
@@ -10,13 +10,20 @@ import {MetadataInspector} from '@loopback/metadata'
 import {RabbitmqSubscribeMetadata, RABBITMQ_SUBSCRIBE_DECORATOR} from '../decorators/rabbitmq-subscribe.decorator';
 
 export interface RabbitmqConfig {
-  uri: string,
-  connOptions?: AmqpConnectionManagerOptions,
+  uri: string;
+  connOptions?: AmqpConnectionManagerOptions;
   exchanges?: {
     name: string,
     type: string,
     options?: Options.AssertExchange
-  }[]
+  }[];
+  defaultHandlerError?: ResponseEnum
+}
+
+export enum ResponseEnum {
+  ACK = 0,
+  REQUEUE = 1,
+  NACK = 2,
 }
 
 export class RabbitmqServer extends Context implements Server {
@@ -146,85 +153,33 @@ export class RabbitmqServer extends Context implements Server {
             data = null
           }
 
-          await method({data, message, channel})
+          const responseType = await method({data, message, channel})
 
-          channel.ack(message)
+          this.dispatchResponse(channel, message, responseType)
         }
       } catch (error) {
         console.log(error)
+        if (!message) {
+          return
+        }
+        this.dispatchResponse(channel, message, this.config?.defaultHandlerError)
       }
     })
   }
 
-  // async boot() {
-  //   // @ts-ignore
-  //   this.channel = await this.conn.createChannel();
-
-  //   const queue: Replies.AssertQueue = await this.channel.assertQueue(
-  //     'micro-catalog/sync-videos',
-  //   );
-
-  //   const exchange: Replies.AssertExchange = await this.channel.assertExchange(
-  //     'amq.topic',
-  //     'topic',
-  //   );
-
-  //   await this.channel.bindQueue(queue.queue, exchange.exchange, 'model.*.*');
-
-  //   this.channel.publish(
-  //     'amq.direct',
-  //     'my-routing-key',
-  //     Buffer.from(JSON.stringify({message: 'insert new category'})),
-  //   );
-
-  //   // Example msg
-  //   // {"id": "dddab32b-a0ac-435e-9fd8-5350dd98dd4d","name": "categoria 1","createdAt": "2020-02-01","updatedAt": "2020-02-01"}
-
-  //   this.channel.consume(queue.queue, (msg: ConsumeMessage | null) => {
-  //     if (!msg) return;
-
-
-  //     const data = JSON.parse(msg.content.toString());
-
-
-  //     const [model, event] = msg.fields.routingKey.split('.').slice(1);
-
-  //     this
-  //       .sync({model, event, data})
-  //       .then(() => this.channel.ack(msg))
-  //       .catch(err => {
-  //         this.channel.reject(msg, false);
-  //       });
-  //   });
-  // }
-
-  // async sync({
-  //   model,
-  //   event,
-  //   data,
-  // }: {
-  //   model: string;
-  //   event: string;
-  //   data: Category;
-  // }) {
-  //   if (model === 'category') {
-  //     switch (event) {
-  //       case 'created':
-  //         await this.categoryRepo.create({
-  //           ...data,
-  //           createdAt: new Date().toISOString(),
-  //           updatedAt: new Date().toISOString(),
-  //         });
-  //         break;
-  //       case 'updated':
-  //         await this.categoryRepo.updateById(data.id, data);
-  //         break;
-  //       case 'deleted':
-  //         await this.categoryRepo.deleteById(data.id);
-  //         break;
-  //     }
-  //   }
-  // }
+  private dispatchResponse(channel: Channel, message: Message, responseType?: ResponseEnum) {
+    switch (responseType) {
+      case ResponseEnum.REQUEUE:
+        channel.nack(message, false, true);
+        break;
+      case ResponseEnum.NACK:
+        channel.nack(message, false, false);
+        break;
+      case ResponseEnum.ACK:
+      default:
+        channel.ack(message)
+    }
+  }
 
   async stop(): Promise<void> {
     await this.conn.close();
