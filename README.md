@@ -40,7 +40,7 @@ Pronto sua aplicação estará rodando no endereço http://localhost:3000
 yarn test
 ```
 
-## Erros comuns e soluções
+## Podem ocorrer erros ao executar o projeto, segue as soluções
 
 Permissões na pasta .docker/elasticdata
 
