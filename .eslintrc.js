@@ -6,7 +6,7 @@ module.exports = {
     '@typescript-eslint/camelCase': 'off',
   },
   parserOptions: {
-    project: 'tsconfig.json',
+    project: __dirname + '/tsconfig.json',
     tsconfigRootDir: __dirname,
     sourceType: 'module',
   },

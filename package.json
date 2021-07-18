@@ -35,7 +35,8 @@
     "prestart": "yarn run rebuild",
     "start": "node -r source-map-support/register .",
     "clean": "lb-clean dist *.tsbuildinfo .eslintcache",
-    "rebuild": "yarn run clean && yarn run build"
+    "rebuild": "yarn run clean && yarn run build",
+    "console": "node dist/console.js"
   },
   "repository": {
     "type": "git",
@@ -61,6 +62,7 @@
     "@types/lodash": "^4.14.171",
     "amqp-connection-manager": "^3.2.2",
     "amqplib": "^0.8.0",
+    "chalk": "^4.1.1",
     "dotenv": "^10.0.0",
     "lodash": "^4.17.21",
     "loopback-connector-esv6": "^2.1.1",
