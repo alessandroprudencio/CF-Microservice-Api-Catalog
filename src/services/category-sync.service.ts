@@ -2,12 +2,15 @@ import {bind, BindingScope} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {rabbitmqSubscribe} from '../decorators/rabbitmq-subscribe.decorator';
 import {CategoryRepository} from '../repositories';
+import {BaseModelSyncService} from './base-model-sync.service'
 
-@bind({scope: BindingScope.TRANSIENT})
-export class CategorySyncService {
+@bind({scope: BindingScope.SINGLETON})
+export class CategorySyncService extends BaseModelSyncService {
   constructor(
     @repository(CategoryRepository) private categoryRepo: CategoryRepository,
-  ) { }
+  ) {
+    super()
+  }
 
   @rabbitmqSubscribe({
     exchange: 'amq.topic',
@@ -16,18 +19,6 @@ export class CategorySyncService {
   })
 
   async handler({message, data}: any) {
-    const action = message.fields.routingKey.split('.')[2]
-
-    switch (action) {
-      case 'created':
-        await this.categoryRepo.create(data)
-        break;
-      case 'updated':
-        await this.categoryRepo.updateById(data, data.id)
-        break;
-      case 'deleted':
-        await this.categoryRepo.deleteById(data.id)
-        break;
-    }
+    await this.sync({repo: this.categoryRepo, data, message})
   }
 }

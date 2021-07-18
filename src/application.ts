@@ -6,6 +6,7 @@ import {RestExplorerBindings} from '@loopback/rest-explorer';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
 import {RestExplorerComponent} from './components';
+// import {Category} from './models';
 import {MySequence} from './sequence';
 import {RabbitmqServer} from './servers';
 
@@ -43,4 +44,8 @@ export class CfMicroserviceApiCatalogApplication extends BootMixin(
 
     this.servers([RabbitmqServer]);
   }
+
+  // async boot() {
+  //   // console.log(Category.definition)
+  // }
 }
